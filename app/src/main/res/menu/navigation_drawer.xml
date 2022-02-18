@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+<group android:id="@+id/Group1"
+    android:checkableBehavior="single">
+    <item
+        android:id="@+id/mainPageFragment"
+        android:title="@string/nav_Main"
+        android:checked="true" />
+    <item
+        android:id="@+id/smartphoneFragment"
+        android:title="@string/nav_Smartphone" />
+    <item
+        android:id="@+id/notebookFragment"
+        android:title="@string/nav_Notebook" />
+    <item
+        android:id="@+id/wirelessHeadphonesFragment"
+        android:title="@string/nav_Wire" />
+    <item
+        android:id="@+id/wireHeadphonesFragment"
+        android:title="@string/nav_Wireless" />
+    <item
+        android:id="@+id/accessoryFragment"
+        android:title="@string/nav_Accessory" />
+</group>
+</menu>

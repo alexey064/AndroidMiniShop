@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav"
+    app:startDestination="@id/mainPageFragment">
+    <fragment
+        android:id="@+id/mainPageFragment"
+        android:name="com.example.myapplication.View.MainPageFragment"
+        android:label="fragment_main_page"
+        tools:layout="@layout/fragment_main_page" />
+    <fragment
+        android:id="@+id/smartphoneFragment"
+        android:name="com.example.myapplication.View.SmartphonesFragment"
+        android:label="Smartphones" />
+    <fragment
+        android:id="@+id/notebookFragment"
+        android:name="com.example.myapplication.View.NotebookFragment"
+        android:label="NotebookFragment" />
+    <fragment
+        android:id="@+id/wireHeadphonesFragment"
+        android:name="com.example.myapplication.View.WireHeadphonesFragment"
+        android:label="WireHeadphonesFragment" />
+    <fragment
+        android:id="@+id/accessoryFragment"
+        android:name="com.example.myapplication.View.AccessoryFragment"
+        android:label="AccessoryFragment" />
+    <fragment
+        android:id="@+id/wirelessHeadphonesFragment"
+        android:name="com.example.myapplication.View.WirelessHeadphonesFragment"
+        android:label="WirelessHeadphonesFragment" />
+    <fragment
+        android:id="@+id/productFragment"
+        android:name="com.example.myapplication.View.ProductFragment"
+        android:label="ProductFragment" />
+    <fragment
+        android:id="@+id/LoginFragment"
+        android:name="com.example.myapplication.View.LogInFragment"
+        android:label="LoginFragment"/>
+    <fragment
+        android:id="@+id/CartFragment"
+        android:name="com.example.myapplication.View.CartFragment"
+        android:label="CartFragment"/>
+</navigation>
