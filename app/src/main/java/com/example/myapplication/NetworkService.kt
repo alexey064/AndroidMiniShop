@@ -1,52 +1,58 @@
-package com.example.myapplication;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import java.io.IOException;
-import okhttp3.Interceptor;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.Response;
-import okhttp3.logging.HttpLoggingInterceptor;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
-public class NetworkService {
-    private static NetworkService mInstance;
-    private static final String BASE_URL = "http://192.168.1.180:82/";
-    private Retrofit mRetrofit;
+package com.example.myapplication
 
-    private NetworkService() {
-        HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
-        interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
-        OkHttpClient client = new OkHttpClient.Builder().addInterceptor(interceptor).build();
-        mRetrofit = new Retrofit.Builder().baseUrl(BASE_URL).client(client)
-                .addConverterFactory(buildGsonConverter()).build();
+import retrofit2.Retrofit
+import okhttp3.logging.HttpLoggingInterceptor
+import okhttp3.Interceptor
+import retrofit2.converter.gson.GsonConverterFactory
+import com.google.gson.GsonBuilder
+import okhttp3.OkHttpClient
+
+class NetworkService private constructor() {
+    private var mRetrofit: Retrofit
+    fun getAuthorizeInstance(Token: String) {
+        val httpClient = OkHttpClient.Builder()
+        val interceptor = HttpLoggingInterceptor()
+        interceptor.setLevel(HttpLoggingInterceptor.Level.BODY)
+        httpClient.addInterceptor(Interceptor { chain ->
+            val request =
+                chain.request().newBuilder().addHeader("Authorization", "Bearer $Token").build()
+            chain.proceed(request)
+        })
+        httpClient.addInterceptor(interceptor)
+        mRetrofit = Retrofit.Builder().addConverterFactory(buildGsonConverter()).baseUrl(BASE_URL)
+            .client(httpClient.build()).build()
     }
-    public static NetworkService getInstance() {
-        if (mInstance == null) { mInstance = new NetworkService(); }
-        return mInstance;
-    }
-    public void getAuthorizeInstance(String Token)
-    {
-        OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
-        HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
-        interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
-        httpClient.addInterceptor(new Interceptor() {
-            @Override
-            public Response intercept(Chain chain) throws IOException {
-                Request request = chain.request().newBuilder().addHeader("Authorization", "Bearer "+Token).build();
-                return chain.proceed(request);
+
+    val api2: MyApi
+        get() = mRetrofit.create(MyApi::class.java)
+    val api: MySiteApi
+        get() = mRetrofit.create(MySiteApi::class.java)
+
+    companion object {
+        private var mInstance: NetworkService? = null
+        private const val BASE_URL = "http://192.168.1.180:82/"
+        @JvmStatic
+        val instance: NetworkService?
+            get() {
+                if (mInstance == null) {
+                    mInstance = NetworkService()
+                }
+                return mInstance
             }
-        });
-        httpClient.addInterceptor(interceptor);
-        mRetrofit = new Retrofit.Builder().addConverterFactory(buildGsonConverter()).baseUrl(BASE_URL).client(httpClient.build()).build();
+
+        private fun buildGsonConverter(): GsonConverterFactory {
+            val gsonBuilder = GsonBuilder()
+            gsonBuilder.setDateFormat("yyyy-MM-dd'T'HH:mm:ss")
+            val myGson = gsonBuilder.create()
+            return GsonConverterFactory.create(myGson)
+        }
     }
-    public MySiteApi getApi() {
-        return mRetrofit.create(MySiteApi.class);
-    }
-    private static GsonConverterFactory buildGsonConverter() {
-        GsonBuilder gsonBuilder = new GsonBuilder();
-        gsonBuilder.setDateFormat("yyyy-MM-dd'T'HH:mm:ss");
-        Gson myGson = gsonBuilder.create();
-        return GsonConverterFactory.create(myGson);
+
+    init {
+        val interceptor = HttpLoggingInterceptor()
+        interceptor.setLevel(HttpLoggingInterceptor.Level.BODY)
+        val client: OkHttpClient = OkHttpClient.Builder().addInterceptor(interceptor).build()
+        mRetrofit = Retrofit.Builder().baseUrl(BASE_URL).client(client)
+            .addConverterFactory(buildGsonConverter()).build()
     }
 }
