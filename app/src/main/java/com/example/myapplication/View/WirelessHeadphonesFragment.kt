@@ -1,54 +1,44 @@
-package com.example.myapplication.View;
+package com.example.myapplication.View
 
-import android.os.Bundle;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
+import androidx.recyclerview.widget.RecyclerView
+import com.example.myapplication.ViewModel.WirelessHeadphonesViewModel
+import android.view.LayoutInflater
+import android.view.ViewGroup
+import android.os.Bundle
+import com.example.myapplication.Other.VerticalSpacesItemDecoration
+import androidx.lifecycle.LifecycleOwner
+import Models.linked.Product
+import android.view.View
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
+import com.example.myapplication.Adapter.CatalogAdapter
+import com.example.myapplication.databinding.FragmentWirelessheadphonesBinding
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
-import androidx.annotation.NonNull;
-import androidx.fragment.app.Fragment;
-import androidx.lifecycle.LifecycleOwner;
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProvider;
-import androidx.recyclerview.widget.RecyclerView;
-
-import com.example.myapplication.Adapter.CatalogAdapter;
-import com.example.myapplication.Other.VerticalSpacesItemDecoration;
-import com.example.myapplication.ViewModel.WirelessHeadphonesViewModel;
-import com.example.myapplication.databinding.FragmentWirelessheadphonesBinding;
-
-import java.util.ArrayList;
-
-import Models.linked.Product;
-
-public class WirelessHeadphonesFragment extends Fragment {
-
-    private FragmentWirelessheadphonesBinding binding;
-    RecyclerView WirelessHeadphonesRecView;
-    WirelessHeadphonesViewModel viewModel;
-
-    public View onCreateView(@NonNull LayoutInflater inflater,
-                             ViewGroup container, Bundle savedInstanceState) {
-        binding = FragmentWirelessheadphonesBinding.inflate(inflater, container, false);
-        View root = binding.getRoot();
-        WirelessHeadphonesRecView = binding.WirelessRecView;
-        VerticalSpacesItemDecoration SpacesItemDecoration = new VerticalSpacesItemDecoration(15);
-        WirelessHeadphonesRecView.addItemDecoration(SpacesItemDecoration);
-        viewModel = new ViewModelProvider(this).get(WirelessHeadphonesViewModel.class);
-        viewModel.getWirelessHeadphonesLiveData().observe((LifecycleOwner) getContext(), updateWirelessHeadphones);
-        return root;
+class WirelessHeadphonesFragment : Fragment() {
+    private var binding: FragmentWirelessheadphonesBinding? = null
+    lateinit var WirelessHeadphonesRecView: RecyclerView
+    val viewModel by viewModel<WirelessHeadphonesViewModel>()
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?, savedInstanceState: Bundle?
+    ): View {
+        binding = FragmentWirelessheadphonesBinding.inflate(inflater, container, false)
+        val root: View = binding!!.root
+        WirelessHeadphonesRecView = binding!!.WirelessRecView
+        val SpacesItemDecoration = VerticalSpacesItemDecoration(15)
+        WirelessHeadphonesRecView.addItemDecoration(SpacesItemDecoration)
+        viewModel.wirelessHeadphonesLiveData.observe((context as LifecycleOwner?)!!, updateWirelessHeadphones)
+        return root
     }
-
-    Observer<ArrayList<Product>> updateWirelessHeadphones = new Observer<ArrayList<Product>>() {
-        @Override
-        public void onChanged(ArrayList<Product> products) {
-          CatalogAdapter adapter = new CatalogAdapter(products);
-          WirelessHeadphonesRecView.setAdapter(adapter);
+    var updateWirelessHeadphones: Observer<List<Product>> =
+        Observer<List<Product>> { products ->
+            val adapter = CatalogAdapter(products)
+            WirelessHeadphonesRecView.adapter = adapter
         }
-    };
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        binding = null;
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        binding = null
     }
 }

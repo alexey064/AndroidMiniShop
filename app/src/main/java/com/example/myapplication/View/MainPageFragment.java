@@ -14,12 +14,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import Models.ViewModel.*;
 
-import com.example.myapplication.Adapter.Adapter;
-import com.example.myapplication.Other.LeftRightSpacesItemDecoration;
-import com.example.myapplication.ViewModel.MainPageViewModel;
-import com.example.myapplication.databinding.FragmentMainPageBinding;
 public class MainPageFragment extends Fragment {
-    private FragmentMainPageBinding binding;
+    /*private FragmentMainPageBinding binding;
     RecyclerView _NewlyAdded;
     RecyclerView _MostBuyed;
     RecyclerView _MostDiscounted;
@@ -61,4 +57,5 @@ public class MainPageFragment extends Fragment {
         super.onDestroyView();
         binding = null;
     }
+     */
 }

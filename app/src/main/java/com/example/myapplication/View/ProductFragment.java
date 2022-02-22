@@ -17,9 +17,7 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.Navigation;
 
-import com.example.myapplication.NetworkService;
 import com.example.myapplication.R;
-import com.example.myapplication.ViewModel.ProductViewModel;
 import com.example.myapplication.databinding.FragmentProductBinding;
 import com.squareup.picasso.Picasso;
 
@@ -34,7 +32,7 @@ import retrofit2.Response;
 
 public class ProductFragment extends Fragment{
 
-    private FragmentProductBinding binding;
+    /*private FragmentProductBinding binding;
     ProductViewModel viewModel;
     View root;
     LayoutInflater inflat;
@@ -258,4 +256,5 @@ public class ProductFragment extends Fragment{
         ConnectionType.setText(product.getWireHeadphones().getConnectionType().getName());
         return view;
     }
+     */
 }

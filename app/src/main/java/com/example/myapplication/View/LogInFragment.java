@@ -16,13 +16,12 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-import com.example.myapplication.NetworkService;
 import com.example.myapplication.R;
 import com.example.myapplication.databinding.FragmentLoginBinding;
 
 import java.util.HashMap;
 public class LogInFragment  extends Fragment {
-    private FragmentLoginBinding binding;
+    /*private FragmentLoginBinding binding;
     private EditText LoginEdit;
     private EditText PasswordEdit;
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -64,4 +63,5 @@ public class LogInFragment  extends Fragment {
             });
         }
     };
+     */
 }

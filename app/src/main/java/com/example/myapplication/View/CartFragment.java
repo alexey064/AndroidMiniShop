@@ -13,11 +13,6 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.myapplication.Adapter.CartAdapter;
-import com.example.myapplication.NetworkService;
-import com.example.myapplication.R;
-import com.example.myapplication.ViewModel.CartViewModel;
-import com.example.myapplication.databinding.FragmentCartBinding;
 
 import java.util.ArrayList;
 
@@ -25,8 +20,8 @@ import Models.linked.Product;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-public class CartFragment extends Fragment implements View.OnClickListener{
-    private FragmentCartBinding binding;
+public class CartFragment extends Fragment{
+    /*private FragmentCartBinding binding;
     RecyclerView CartRecView;
     CartViewModel viewModel;
     Button makeOrder;
@@ -63,4 +58,5 @@ public class CartFragment extends Fragment implements View.OnClickListener{
             public void onFailure(Call<String> call, Throwable t) {
 
             }
-        });  }  }
+        });  }  */
+}
