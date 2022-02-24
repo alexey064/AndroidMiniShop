@@ -1,6 +1,7 @@
 package com.example.myapplication.Repository
 
 import Models.linked.Product
+import com.example.myapplication.DataSource.RemoteWirelessHeadphonesDataSource
 
 class WirelessHeadphoneRepositoryImpl(_Remote : RemoteWirelessHeadphonesDataSource) : WirelessHeadphoneRepository {
     val Remote : RemoteWirelessHeadphonesDataSource

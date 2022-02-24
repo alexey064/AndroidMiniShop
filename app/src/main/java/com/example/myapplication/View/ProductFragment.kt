@@ -1,260 +1,202 @@
-package com.example.myapplication.View;
+package com.example.myapplication.View
 
-import android.os.Bundle;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.FrameLayout;
-import android.widget.ImageView;
-import android.widget.TextView;
-import android.widget.Toast;
+import androidx.navigation.Navigation.findNavController
+import android.view.LayoutInflater
+import android.view.ViewGroup
+import android.os.Bundle
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.LifecycleOwner
+import Models.linked.Product
+import com.example.myapplication.R
+import com.squareup.picasso.Picasso
+import Models.LoginData
+import android.view.View
+import android.widget.*
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
+import com.example.myapplication.NetworkService
+import com.example.myapplication.ViewModel.ProductViewModel
+import com.example.myapplication.databinding.FragmentProductBinding
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import java.lang.Exception
+import java.util.HashMap
 
-import androidx.annotation.NonNull;
-import androidx.fragment.app.Fragment;
-import androidx.lifecycle.LifecycleOwner;
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProvider;
-import androidx.navigation.Navigation;
-
-import com.example.myapplication.R;
-import com.example.myapplication.databinding.FragmentProductBinding;
-import com.squareup.picasso.Picasso;
-
-import java.util.HashMap;
-import java.util.Objects;
-
-import Models.LoginData;
-import Models.linked.Product;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
-
-public class ProductFragment extends Fragment{
-
-    /*private FragmentProductBinding binding;
-    ProductViewModel viewModel;
-    View root;
-    LayoutInflater inflat;
-    public View onCreateView(@NonNull LayoutInflater inflater,
-                             ViewGroup container, Bundle savedInstanceState) {
-        binding = FragmentProductBinding.inflate(inflater, container, false);
-        root = binding.getRoot();
-        inflat=inflater;
-        int id = Integer.parseInt(getArguments().getString("id"));
-        viewModel = new ViewModelProvider(this, new ProductViewModel.MyViewModelFactory(id)).get(ProductViewModel.class);
-        viewModel.GetProduct().observe((LifecycleOwner) this, updateProduct);
-        return root;
+class ProductFragment : Fragment() {
+    private var binding: FragmentProductBinding? = null
+    var viewModel: ProductViewModel? = null
+    var root: View? = null
+    var inflat: LayoutInflater? = null
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?, savedInstanceState: Bundle?
+    ): View? {
+        binding = FragmentProductBinding.inflate(inflater, container, false)
+        root = binding!!.root
+        inflat = inflater
+        val id = arguments!!.getString("id")!!.toInt()
+        viewModel =
+            ViewModelProvider(this, ProductViewModel.MyViewModelFactory(id)).get(ProductViewModel::class.java)
+        viewModel!!.GetProduct().observe(this as LifecycleOwner, updateProduct)
+        return root
     }
-    Observer<Product> updateProduct = new Observer<Product>() {
-        @Override
-        public void onChanged(Product product) {
 
-            TextView name = root.findViewById(R.id.Product_name);
-            TextView description = root.findViewById(R.id.Product_description);
-            Button buy = root.findViewById(R.id.ProductBuy);
-            ImageView img = root.findViewById(R.id.Product_img);
-            View AddInfo=null;
-            if (product.getNotebook()!=null)
-            {
-                AddInfo = inflat.inflate(R.layout.detail_notebook, null);
-                AddInfo=getNotebookDetail(AddInfo, product);
-            }
-            if (product.getSmartphone()!=null)
-            {
-                AddInfo = inflat.inflate(R.layout.detail_smartphone, null);
-                AddInfo=getSmartphoneDetail(AddInfo, product);
-            }
-            if (product.getWirelessHeadphones()!=null)
-            {
-                AddInfo = inflat.inflate(R.layout.detail_wirelessheadphones, null);
-                AddInfo=getWirelessHeadphonesDetail(AddInfo, product);
-            }
-            if (product.getWireHeadphones()!=null)
-            {
-                AddInfo = inflat.inflate(R.layout.detail_wireheadphones, null);
-                AddInfo=getWireHeadphones(AddInfo, product);
-            }
-            View CommonInfo = inflat.inflate(R.layout.detail_common, null);
-            TextView TypeValue = CommonInfo.findViewById(R.id.TypeValue);
-            TypeValue.setText(product.getType().getCategory());
-            TextView BrandValue = CommonInfo.findViewById(R.id.BrandValue);
-            BrandValue.setText(product.getBrand().getName());
-            TextView ColorValue = CommonInfo.findViewById(R.id.ColorValue);
-            ColorValue.setText(product.getColor().getName());
-            FrameLayout FAddInfo = root.findViewById(R.id.InfoDetailed);
-            FrameLayout FCommonInfo = root.findViewById(R.id.InfoCommon);
-            if (AddInfo!=null)    FAddInfo.addView(AddInfo);
-            FCommonInfo.addView(CommonInfo);
-            //value.setLayoutParams(weight);
-            String url = product.getPhoto();
-            try{
-                Picasso.get() // Context
-                        .load("http://192.168.1.180:82"+url) // URL or file
-                        .into(img);
-                buy.setText(String.valueOf(product.getPrice()));
-                buy.setOnClickListener(BuyClick);
-                description.setText(product.getDescription());
-                name.setText(product.getName());
-            }
-            catch (Exception e) {
-                e.printStackTrace();
-            }
+    var updateProduct = Observer<Product?> { product ->
+        val name = root!!.findViewById<TextView>(R.id.Product_name)
+        val description = root!!.findViewById<TextView>(R.id.Product_description)
+        val buy = root!!.findViewById<Button>(R.id.ProductBuy)
+        val img = root!!.findViewById<ImageView>(R.id.Product_img)
+        var AddInfo: View? = null
+        if (product.notebook != null) {
+            AddInfo = inflat!!.inflate(R.layout.detail_notebook, null)
+            AddInfo = getNotebookDetail(AddInfo, product)
         }
-    };
-    View.OnClickListener BuyClick = new View.OnClickListener() {
-        @Override
-        public void onClick(View view) {
-            HashMap<String, Integer> data = new HashMap<String, Integer>();
-            data.put("id",Integer.valueOf(getArguments().getString("id")));
-            if (LoginData.getUsername()!=null)
-                NetworkService.getInstance().getApi().PostSHoppingCart(data).enqueue(new Callback<String>() {
-                    @Override
-                    public void onResponse(Call<String> call, Response<String> response) {
-                        if (!response.body().equals("true"))
-                        {
-                            Toast.makeText(getContext(), R.string.CartAddFailed, Toast.LENGTH_SHORT).show();
-                        }
-                        else {
-                            Toast.makeText(getContext(), R.string.CartAddFailed, Toast.LENGTH_SHORT).show();
-                            Bundle bundle = new Bundle();
-                            bundle.putString("id",getArguments().getString("id"));
-                            Navigation.findNavController(view).navigate(R.id.productFragment, bundle);
-                        }
-                    }
-                    @Override
-                    public void onFailure(Call<String> call, Throwable t) {
-                    }
-                });
-            else Toast.makeText(getContext(), R.string.SignInRequired,Toast.LENGTH_SHORT).show();
+        if (product.smartphone != null) {
+            AddInfo = inflat!!.inflate(R.layout.detail_smartphone, null)
+            AddInfo = getSmartphoneDetail(AddInfo, product)
         }
-    };
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        binding=null;
+        if (product.wirelessHeadphones != null) {
+            AddInfo = inflat!!.inflate(R.layout.detail_wirelessheadphones, null)
+            AddInfo = getWirelessHeadphonesDetail(AddInfo, product)
+        }
+        if (product.wireHeadphones != null) {
+            AddInfo = inflat!!.inflate(R.layout.detail_wireheadphones, null)
+            AddInfo = getWireHeadphones(AddInfo, product)
+        }
+        val CommonInfo = inflat!!.inflate(R.layout.detail_common, null)
+        val TypeValue = CommonInfo.findViewById<TextView>(R.id.TypeValue)
+        TypeValue.text = product.type.category
+        val BrandValue = CommonInfo.findViewById<TextView>(R.id.BrandValue)
+        BrandValue.text = product.brand.name
+        val ColorValue = CommonInfo.findViewById<TextView>(R.id.ColorValue)
+        ColorValue.text = product.color.name
+        val FAddInfo = root!!.findViewById<FrameLayout>(R.id.InfoDetailed)
+        val FCommonInfo = root!!.findViewById<FrameLayout>(R.id.InfoCommon)
+        if (AddInfo != null) FAddInfo.addView(AddInfo)
+        FCommonInfo.addView(CommonInfo)
+        //value.setLayoutParams(weight);
+        val url = product.photo
+        try {
+            Picasso.get() // Context
+                .load("http://192.168.1.180:82$url") // URL or file
+                .into(img)
+            buy.text = product.price.toString()
+            buy.setOnClickListener(BuyClick)
+            description.text = product.description
+            name.text = product.name
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
     }
-    public View getNotebookDetail(View AddInfo, Product product)
-    {
-        TextView RamCountValue = AddInfo.findViewById(R.id.RamCountValue);
-        RamCountValue.setText(String.valueOf(product.getNotebook().getRAMCount()));
-
-        TextView WeightValue = AddInfo.findViewById(R.id.WeightValue);
-        WeightValue.setText(String.valueOf(product.getNotebook().getWeight()));
-
-        TextView HDDSizeValue = AddInfo.findViewById(R.id.HDDSizeValue);
-        HDDSizeValue.setText(String.valueOf(product.getNotebook().getHDDSize()));
-
-        TextView SSDSizeValue = AddInfo.findViewById(R.id.SSDSizeValue);
-        SSDSizeValue.setText(String.valueOf(product.getNotebook().getSSDSize()));
-
-        TextView ScreenSizeValue = AddInfo.findViewById(R.id.ScreenSizeValue);
-        ScreenSizeValue.setText(String.valueOf(product.getNotebook().getScreenSize()));
-
-        TextView ScreenResolutionValue = AddInfo.findViewById(R.id.ScreenResolutionValue);
-        ScreenResolutionValue.setText(product.getNotebook().getScreenResolution());
-
-        TextView CameraValue = AddInfo.findViewById(R.id.CameraValue);
-        CameraValue.setText(product.getNotebook().getCamera());
-
-        TextView WirelessCommunicationValue = AddInfo.findViewById(R.id.WirelessCommunicationValue);
-        WirelessCommunicationValue.setText(product.getNotebook().getWirelessCommunication());
-
-        TextView BatteryCapacityValue = AddInfo.findViewById(R.id.BatteryCapacityValue);
-        BatteryCapacityValue.setText(String.valueOf(product.getNotebook().getBatteryCapacity()));
-
-        TextView OutputsValue = AddInfo.findViewById(R.id.OutputsValue);
-        OutputsValue.setText(product.getNotebook().getOutputs());
-
-        TextView OptionalValue = AddInfo.findViewById(R.id.OptionalValue);
-        OptionalValue.setText(product.getNotebook().getOptional());
-
-        TextView OSValue = AddInfo.findViewById(R.id.OSValue);
-        OSValue.setText(product.getNotebook().getOS().getName());
-
-        TextView VieocardValue = AddInfo.findViewById(R.id.VideocardValue);
-        VieocardValue.setText(product.getNotebook().getVideocard().getName());
-
-        TextView ProcessorValue = AddInfo.findViewById(R.id.ProcessorValue);
-        ProcessorValue.setText(product.getNotebook().getProcessor().getName());
-
-        TextView ScreenTypeValue = AddInfo.findViewById(R.id.ScreenTypeValue);
-        ScreenTypeValue.setText(product.getNotebook().getScreenType().getName());
-        return AddInfo;
+    var BuyClick = View.OnClickListener { view ->
+        val data = HashMap<String, Int>()
+        data["id"] = Integer.valueOf(arguments!!.getString("id"))
+        GlobalScope.launch {
+            if (LoginData.getUsername() != null)
+            { val response = NetworkService.instance?.api?.PostSHoppingCart(data)
+            if (response!!.body() != "true") {
+                Toast.makeText(context, R.string.CartAddFailed, Toast.LENGTH_SHORT).show()
+            } else {
+                Toast.makeText(context, R.string.CartAddFailed, Toast.LENGTH_SHORT).show()
+                val bundle = Bundle()
+                bundle.putString("id", arguments!!.getString("id"))
+                findNavController(view).navigate(R.id.productFragment, bundle)
+            }
+        } else Toast.makeText(context, R.string.SignInRequired, Toast.LENGTH_SHORT).show()
+        }
     }
-    public View getSmartphoneDetail(View view, Product product)
-    {
-        TextView MemoryCountValue = view.findViewById(R.id.MemoryCountValue);
-        MemoryCountValue.setText(String.valueOf(product.getSmartphone().getMemoryCount()));
 
-        TextView RamCountValue = view.findViewById(R.id.RamCountValue);
-        RamCountValue.setText(String.valueOf(product.getSmartphone().getRAMCount()));
-
-        TextView BatteryCapacityValue = view.findViewById(R.id.BatteryCapacityValue);
-        BatteryCapacityValue.setText(String.valueOf(product.getSmartphone().getBatteryCapacity()));
-
-        TextView CameraValue = view.findViewById(R.id.CameraValue);
-        CameraValue.setText(String.valueOf(product.getSmartphone().getCamera()));
-
-        TextView PhoneSizeValue = view.findViewById(R.id.PhoneSizeValue);
-        PhoneSizeValue.setText(String.valueOf(product.getSmartphone().getPhoneSize()));
-
-        TextView WeightValue = view.findViewById(R.id.WeightValue);
-        WeightValue.setText(String.valueOf(product.getSmartphone().getWeight()));
-
-        TextView NFCValue = view.findViewById(R.id.NFCValue);
-        NFCValue.setText(String.valueOf(product.getSmartphone().isNFC()));
-
-        TextView CommunicationValue = view.findViewById(R.id.CommunicationValue);
-        CommunicationValue.setText(String.valueOf(product.getSmartphone().getCommunication()));
-
-        TextView ScreenSizeValue = view.findViewById(R.id.ScreenSizeValue);
-        ScreenSizeValue.setText(String.valueOf(product.getSmartphone().getScreenSize()));
-
-        TextView OptionalValue = view.findViewById(R.id.OptionalValue);
-        OptionalValue.setText(String.valueOf(product.getSmartphone().getOptional()));
-
-        TextView ScreenResolutionValue = view.findViewById(R.id.ScreenResolutionValue);
-        ScreenResolutionValue.setText(String.valueOf(product.getSmartphone().getScreenResolution()));
-
-        TextView OSValue = view.findViewById(R.id.OSValue);
-        OSValue.setText(String.valueOf(product.getSmartphone().getOS().getName()));
-
-        TextView ProcessorValue = view.findViewById(R.id.ProcessorValue);
-        ProcessorValue.setText(String.valueOf(product.getSmartphone().getProcessor().getName()));
-
-        TextView ScreenTypeValue = view.findViewById(R.id.ScreenTypeValue);
-        ScreenTypeValue.setText(String.valueOf(product.getSmartphone().getScreenType().getName()));
-
-        TextView ChargingTypeValue = view.findViewById(R.id.ChargingTypeValue);
-        ChargingTypeValue.setText(String.valueOf(product.getSmartphone().getChargingType().getName()));
-
-        return view;
+    override fun onDestroyView() {
+        super.onDestroyView()
+        binding = null
     }
-    public View getWirelessHeadphonesDetail(View view, Product product)
-    {
-        TextView RadiusValue = view.findViewById(R.id.RadiusValue);
-        RadiusValue.setText(String.valueOf(product.getWirelessHeadphones().getRadius()));
 
-        TextView BatteryValue = view.findViewById(R.id.BatteryValue);
-        BatteryValue.setText(String.valueOf(product.getWirelessHeadphones().getBattery()));
-
-        TextView CaseBattery = view.findViewById(R.id.CaseBatteryValue);
-        CaseBattery.setText(String.valueOf(product.getWirelessHeadphones().getCaseBattery()));
-
-        TextView ChargingType = view.findViewById(R.id.ChargingTypeValue);
-        ChargingType.setText(String.valueOf(product.getWirelessHeadphones().getChargingType().getName()));
-
-        return view;
+    fun getNotebookDetail(AddInfo: View?, product: Product): View? {
+        val RamCountValue = AddInfo!!.findViewById<TextView>(R.id.RamCountValue)
+        RamCountValue.text = product.notebook.ramCount.toString()
+        val WeightValue = AddInfo.findViewById<TextView>(R.id.WeightValue)
+        WeightValue.text = product.notebook.weight.toString()
+        val HDDSizeValue = AddInfo.findViewById<TextView>(R.id.HDDSizeValue)
+        HDDSizeValue.text = product.notebook.hddSize.toString()
+        val SSDSizeValue = AddInfo.findViewById<TextView>(R.id.SSDSizeValue)
+        SSDSizeValue.text = product.notebook.ssdSize.toString()
+        val ScreenSizeValue = AddInfo.findViewById<TextView>(R.id.ScreenSizeValue)
+        ScreenSizeValue.text = product.notebook.screenSize.toString()
+        val ScreenResolutionValue = AddInfo.findViewById<TextView>(R.id.ScreenResolutionValue)
+        ScreenResolutionValue.text = product.notebook.screenResolution
+        val CameraValue = AddInfo.findViewById<TextView>(R.id.CameraValue)
+        CameraValue.text = product.notebook.camera
+        val WirelessCommunicationValue =
+            AddInfo.findViewById<TextView>(R.id.WirelessCommunicationValue)
+        WirelessCommunicationValue.text = product.notebook.wirelessCommunication
+        val BatteryCapacityValue = AddInfo.findViewById<TextView>(R.id.BatteryCapacityValue)
+        BatteryCapacityValue.text = product.notebook.batteryCapacity.toString()
+        val OutputsValue = AddInfo.findViewById<TextView>(R.id.OutputsValue)
+        OutputsValue.text = product.notebook.outputs
+        val OptionalValue = AddInfo.findViewById<TextView>(R.id.OptionalValue)
+        OptionalValue.text = product.notebook.optional
+        val OSValue = AddInfo.findViewById<TextView>(R.id.OSValue)
+        OSValue.text = product.notebook.os.name
+        val VieocardValue = AddInfo.findViewById<TextView>(R.id.VideocardValue)
+        VieocardValue.text = product.notebook.videocard.name
+        val ProcessorValue = AddInfo.findViewById<TextView>(R.id.ProcessorValue)
+        ProcessorValue.text = product.notebook.processor.name
+        val ScreenTypeValue = AddInfo.findViewById<TextView>(R.id.ScreenTypeValue)
+        ScreenTypeValue.text = product.notebook.screenType.name
+        return AddInfo
     }
-    public View getWireHeadphones(View view, Product product)
-    {
-        TextView WireLength = view.findViewById(R.id.WireLengthValue);
-        WireLength.setText(String.valueOf(product.getWireHeadphones().getWireLenght()));
 
-        TextView ConnectionType = view.findViewById(R.id.ConnectionTypeValue);
-        ConnectionType.setText(product.getWireHeadphones().getConnectionType().getName());
-        return view;
+    fun getSmartphoneDetail(view: View?, product: Product): View? {
+        val MemoryCountValue = view!!.findViewById<TextView>(R.id.MemoryCountValue)
+        MemoryCountValue.text = product.smartphone.memoryCount.toString()
+        val RamCountValue = view.findViewById<TextView>(R.id.RamCountValue)
+        RamCountValue.text = product.smartphone.ramCount.toString()
+        val BatteryCapacityValue = view.findViewById<TextView>(R.id.BatteryCapacityValue)
+        BatteryCapacityValue.text = product.smartphone.batteryCapacity.toString()
+        val CameraValue = view.findViewById<TextView>(R.id.CameraValue)
+        CameraValue.text = product.smartphone.camera.toString()
+        val PhoneSizeValue = view.findViewById<TextView>(R.id.PhoneSizeValue)
+        PhoneSizeValue.text = product.smartphone.phoneSize.toString()
+        val WeightValue = view.findViewById<TextView>(R.id.WeightValue)
+        WeightValue.text = product.smartphone.weight.toString()
+        val NFCValue = view.findViewById<TextView>(R.id.NFCValue)
+        NFCValue.text = product.smartphone.isNFC.toString()
+        val CommunicationValue = view.findViewById<TextView>(R.id.CommunicationValue)
+        CommunicationValue.text = product.smartphone.communication.toString()
+        val ScreenSizeValue = view.findViewById<TextView>(R.id.ScreenSizeValue)
+        ScreenSizeValue.text = product.smartphone.screenSize.toString()
+        val OptionalValue = view.findViewById<TextView>(R.id.OptionalValue)
+        OptionalValue.text = product.smartphone.optional.toString()
+        val ScreenResolutionValue = view.findViewById<TextView>(R.id.ScreenResolutionValue)
+        ScreenResolutionValue.text = product.smartphone.screenResolution.toString()
+        val OSValue = view.findViewById<TextView>(R.id.OSValue)
+        OSValue.text = product.smartphone.os.name.toString()
+        val ProcessorValue = view.findViewById<TextView>(R.id.ProcessorValue)
+        ProcessorValue.text = product.smartphone.processor.name.toString()
+        val ScreenTypeValue = view.findViewById<TextView>(R.id.ScreenTypeValue)
+        ScreenTypeValue.text = product.smartphone.screenType.name.toString()
+        val ChargingTypeValue = view.findViewById<TextView>(R.id.ChargingTypeValue)
+        ChargingTypeValue.text = product.smartphone.chargingType.name.toString()
+        return view
     }
-     */
+
+    fun getWirelessHeadphonesDetail(view: View?, product: Product): View? {
+        val RadiusValue = view!!.findViewById<TextView>(R.id.RadiusValue)
+        RadiusValue.text = product.wirelessHeadphones.radius.toString()
+        val BatteryValue = view.findViewById<TextView>(R.id.BatteryValue)
+        BatteryValue.text = product.wirelessHeadphones.battery.toString()
+        val CaseBattery = view.findViewById<TextView>(R.id.CaseBatteryValue)
+        CaseBattery.text = product.wirelessHeadphones.caseBattery.toString()
+        val ChargingType = view.findViewById<TextView>(R.id.ChargingTypeValue)
+        ChargingType.text = product.wirelessHeadphones.chargingType.name.toString()
+        return view
+    }
+
+    fun getWireHeadphones(view: View?, product: Product): View? {
+        val WireLength = view!!.findViewById<TextView>(R.id.WireLengthValue)
+        WireLength.text = product.wireHeadphones.wireLenght.toString()
+        val ConnectionType = view.findViewById<TextView>(R.id.ConnectionTypeValue)
+        ConnectionType.text = product.wireHeadphones.connectionType.name
+        return view
+    }
 }

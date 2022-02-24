@@ -1,6 +1,7 @@
-package com.example.myapplication.Repository
+package com.example.myapplication.DataSource
 
 import Models.linked.Product
+import com.example.myapplication.DataSource.RemoteWireHeadphonesDataSource
 import com.example.myapplication.NetworkService
 
 class RemoteWireHeadphonesDataSourceImpl : RemoteWireHeadphonesDataSource {

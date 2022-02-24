@@ -1,8 +1,9 @@
 package com.example.myapplication.Repository
 
 import Models.linked.Product
+import com.example.myapplication.DataSource.RemoteNotebookDataSource
 
-class NotebookRepositoryImpl(_RemDataSource:RemoteNotebookDataSource) :NotebookRepository {
+class NotebookRepositoryImpl(_RemDataSource: RemoteNotebookDataSource) :NotebookRepository {
     var RemDataSource: RemoteNotebookDataSource;
     init{
         RemDataSource=_RemDataSource

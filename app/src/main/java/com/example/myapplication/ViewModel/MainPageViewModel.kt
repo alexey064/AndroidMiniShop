@@ -9,20 +9,13 @@ import retrofit2.Callback
 import retrofit2.Response
 
 class MainPageViewModel : ViewModel() {
-    /*var mainPageData: MutableLiveData<MainPageData?>
+    var mainPageData: MutableLiveData<MainPageData>
     fun init() {
-        instance!!.api.newlyAdded.enqueue(object : Callback<MainPageData?> {
-            override fun onResponse(call: Call<MainPageData?>, response: Response<MainPageData?>) {
-                mainPageData.postValue(response.body())
-            }
 
-            override fun onFailure(call: Call<MainPageData?>, t: Throwable) {}
-        })
     }
 
     init {
         mainPageData = MutableLiveData()
         init()
     }
-     */
 }

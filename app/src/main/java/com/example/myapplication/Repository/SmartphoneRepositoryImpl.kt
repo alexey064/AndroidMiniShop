@@ -1,9 +1,10 @@
 package com.example.myapplication.Repository
 
 import Models.linked.Product
+import com.example.myapplication.DataSource.RemoteSmartphoneDataSource
 
 class SmartphoneRepositoryImpl(_Remote : RemoteSmartphoneDataSource) : SmartphoneRepository {
-    val Remote:RemoteSmartphoneDataSource
+    val Remote: RemoteSmartphoneDataSource
     init{
         Remote=_Remote
     }

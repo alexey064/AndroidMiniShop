@@ -12,17 +12,16 @@ import android.widget.ImageView
 import androidx.navigation.Navigation
 import com.squareup.picasso.Picasso
 import java.lang.Exception
-import java.util.ArrayList
 
-class Adapter(private val Products: ArrayList<Product>) : RecyclerView.Adapter<Adapter.MyView>() {
+class Adapter(private val Products: List<Product>?) : RecyclerView.Adapter<Adapter.MyView>() {
     inner class MyView(view: View) : RecyclerView.ViewHolder(view), View.OnClickListener {
         var ItemName: TextView
         var Picture: ImageView
         var ItemPrice: TextView
         override fun onClick(view: View) {
-            val item = Products[adapterPosition]
+            val item = Products?.get(adapterPosition)
             val bundle = Bundle()
-            bundle.putString("id", item.productId.toString())
+            bundle.putString("id", item?.productId.toString())
             try {
                 Navigation.findNavController(view).navigate(R.id.productFragment, bundle)
             } catch (e: Exception) {
@@ -46,9 +45,9 @@ class Adapter(private val Products: ArrayList<Product>) : RecyclerView.Adapter<A
     }
 
     override fun onBindViewHolder(holder: MyView, position: Int) {
-        holder.ItemName.text = Products[position].name
-        val price = Products[position].price.toString()
-        if (Products[position].count <= 0) {
+        holder.ItemName.text = Products?.get(position)?.name
+        val price = Products?.get(position)?.price.toString()
+        if (Products!![position].count <= 0) {
             holder.ItemPrice.setText(R.string.NotInStock)
         } else holder.ItemPrice.text = price + "P"
         val url = Products[position].photo
@@ -61,6 +60,6 @@ class Adapter(private val Products: ArrayList<Product>) : RecyclerView.Adapter<A
     }
 
     override fun getItemCount(): Int {
-        return Products.size
+        return Products!!.size
     }
 }
