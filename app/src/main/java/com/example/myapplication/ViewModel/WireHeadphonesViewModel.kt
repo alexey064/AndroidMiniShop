@@ -1,24 +1,31 @@
 package com.example.myapplication.ViewModel
 
+import com.example.myapplication.NetworkService.Companion.instance
 import androidx.lifecycle.ViewModel
-import Models.linked.Product
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.viewModelScope
-import com.example.myapplication.UseCase.LoadWireHeadphoneUseCase
-import kotlinx.coroutines.launch
+import Models.linked.Product
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+import java.util.ArrayList
 
-
-class WireHeadphonesViewModel(_LoadWireHeadphoneUseCase : LoadWireHeadphoneUseCase) : ViewModel() {
-    var userMutableLiveData: MutableLiveData<List<Product>>
-    val loadWireHeadphoneUseCase : LoadWireHeadphoneUseCase
+class WireHeadphonesViewModel : ViewModel() {
+    var userMutableLiveData: MutableLiveData<ArrayList<Product>>
+    private val TYPE = "WireHeadphone"
     fun init() {
-        viewModelScope.launch {
-            val data =loadWireHeadphoneUseCase.Execute()
-            userMutableLiveData.postValue(data)
-        }
+        instance!!.api.GetCatalog(TYPE)!!.enqueue(object : Callback<ArrayList<Product>?> {
+            override fun onResponse(
+                call: Call<ArrayList<Product>?>,
+                response: Response<ArrayList<Product>?>
+            ) {
+                userMutableLiveData.postValue(response.body())
+            }
+
+            override fun onFailure(call: Call<ArrayList<Product>?>, t: Throwable) {}
+        })
     }
+
     init {
-        loadWireHeadphoneUseCase=_LoadWireHeadphoneUseCase
         userMutableLiveData = MutableLiveData()
         init()
     }

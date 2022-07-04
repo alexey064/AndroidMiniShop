@@ -3,14 +3,13 @@ package com.example.myapplication.Adapter
 import com.example.myapplication.NetworkService.Companion.instance
 import Models.linked.Product
 import androidx.recyclerview.widget.RecyclerView
+import android.widget.TextView
+import com.example.myapplication.R
 import android.view.ViewGroup
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.ImageView
-import com.example.myapplication.R
-import android.widget.TextView
 import androidx.navigation.Navigation
-import com.example.myapplication.NetworkService
 import com.squareup.picasso.Picasso
 import retrofit2.Call
 import retrofit2.Callback
@@ -18,7 +17,7 @@ import retrofit2.Response
 import java.lang.Exception
 import java.util.ArrayList
 
-class CartAdapter(var ItemList: List<Product>) : RecyclerView.Adapter<CartAdapter.MyView>() {
+class CartAdapter(var ItemList: ArrayList<Product>) : RecyclerView.Adapter<CartAdapter.MyView>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyView {
         val itemView =
             LayoutInflater.from(parent.context).inflate(R.layout.cart_item, parent, false)
@@ -32,8 +31,7 @@ class CartAdapter(var ItemList: List<Product>) : RecyclerView.Adapter<CartAdapte
         var DelBtn: ImageView
         override fun onClick(view: View) {
             val product = ItemList[adapterPosition]
-            instance!!.api.DeleteShoppingCart(product.productId)
-                ?.enqueue(object : Callback<String?> {
+            instance!!.api.DeleteShoppingCart(product.productId)!!.enqueue(object : Callback<String?> {
                     override fun onResponse(call: Call<String?>, response: Response<String?>) {
                         Navigation.findNavController(view).navigate(R.id.CartFragment)
                     }

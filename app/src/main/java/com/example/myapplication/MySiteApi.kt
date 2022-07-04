@@ -9,32 +9,32 @@ import java.util.HashMap
 
 interface MySiteApi {
     @GET("api/newlyAdded")
-    suspend fun NewlyAdded() : Response<List<Product>>
+    suspend fun newlyAdded(@Query("skip") skip: Int, @Query("Count") count: Int): Response<ArrayList<Product>?>?
 
     @GET("api/MostBuyed")
-    suspend fun MostBuyed(): Response<List<Product>>
+    fun MostBuyed(@Query("skip") skip: Int, @Query("Count") count: Int): Response<ArrayList<Product>?>?
 
-    @GET("api/MostDiscounted")
-    suspend fun MostDiscounted() : Response<List<Product>>
+    @GET("api/MaxDiscounted")
+    fun MaxDiscounted(@Query("skip") skip: Int, @Query("Count") count: Int): Response<ArrayList<Product>?>?
 
     @GET("api/catalog")
-    suspend fun GetCatalog(@Query("type") type: String?): Response<List<Product>>
+    fun GetCatalog(@Query("type") type: String?): Call<ArrayList<Product>?>?
 
     @GET("api/GetProduct")
-    suspend fun GetProduct(@Query("id") id: Int): Response<Product?>?
+    fun GetProduct(@Query("id") id: Int): Call<Product>?
 
     @POST("api/Login")
-    suspend fun SignIn(@Body SignData: HashMap<String, String>): Response<String>
+    fun SignIn(@Body SignData: HashMap<String, String>?): Call<String>?
 
     @GET("api/ShoppingCart")
-    suspend fun GetShoppingCart(): Response<List<Product>>
+    fun GetShoppingCart(): Call<ArrayList<Product>?>?
 
     @POST("api/ShoppingCart")
-    suspend fun PostSHoppingCart(@Body data: HashMap<String, Int>): Response<String?>?
+    fun PostSHoppingCart(@Body data: HashMap<String, Int>?): Call<String>?
 
     @DELETE("api/ShoppingCart")
-    fun DeleteShoppingCart(@Query("id") id: Int): Response<String?>?
+    fun DeleteShoppingCart(@Query("id") id: Int): Call<String>?
 
     @PATCH("api/CompleteOrder")
-    suspend fun CompleteOrder(): Response<String?>?
+    fun CompleteOrder(): Call<String>?
 }

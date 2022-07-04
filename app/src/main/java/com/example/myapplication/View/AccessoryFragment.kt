@@ -4,6 +4,7 @@ import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.os.Bundle
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.LifecycleOwner
 import Models.linked.Product
 import android.view.View
@@ -13,33 +14,34 @@ import com.example.myapplication.Adapter.CatalogAdapter
 import com.example.myapplication.Other.VerticalSpacesItemDecoration
 import com.example.myapplication.ViewModel.AccessoryViewModel
 import com.example.myapplication.databinding.FragmentAccessoryBinding
-import org.koin.androidx.viewmodel.ext.android.viewModel
+import java.util.ArrayList
 
 class AccessoryFragment : Fragment() {
-    private lateinit var binding: FragmentAccessoryBinding
-    lateinit var AccessoryRecView: RecyclerView
-    private val viewModel by viewModel<AccessoryViewModel>()
+    private var binding: FragmentAccessoryBinding? = null
+    var AccessoryRecView: RecyclerView? = null
+    var viewModel: AccessoryViewModel? = null
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?, savedInstanceState: Bundle?
     ): View? {
         binding = FragmentAccessoryBinding.inflate(inflater, container, false)
-        val root: View = binding.getRoot()
-        AccessoryRecView = binding.AccessoryRecView
+        val root: View = binding!!.root
+        AccessoryRecView = binding!!.AccessoryRecView
         val SpacesItemDecoration = VerticalSpacesItemDecoration(15)
         AccessoryRecView!!.addItemDecoration(SpacesItemDecoration)
-        viewModel.accessoryLiveData.observe(this as LifecycleOwner, updateAccessoryList)
+        viewModel = ViewModelProvider(this).get(AccessoryViewModel::class.java)
+        viewModel!!.accessoryLiveData.observe((this as LifecycleOwner), updateAccessoryList)
         return root
     }
 
-    private var updateAccessoryList: Observer<List<Product>> =
-        Observer<List<Product>> { products ->
+    var updateAccessoryList: Observer<ArrayList<Product>?> =
+        Observer<ArrayList<Product>?> { products ->
             val adapter = CatalogAdapter(products)
             AccessoryRecView!!.adapter = adapter
         }
 
     override fun onDestroyView() {
         super.onDestroyView()
-        binding
+        binding = null
     }
 }

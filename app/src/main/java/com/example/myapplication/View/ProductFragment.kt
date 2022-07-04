@@ -1,24 +1,26 @@
 package com.example.myapplication.View
 
-import androidx.navigation.Navigation.findNavController
+import com.example.myapplication.NetworkService.Companion.instance
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.os.Bundle
+import com.example.myapplication.R
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.LifecycleOwner
 import Models.linked.Product
-import com.example.myapplication.R
-import com.squareup.picasso.Picasso
 import Models.LoginData
+import com.example.myapplication.ViewModel.ProductViewModel
+import com.squareup.picasso.Picasso
 import android.view.View
 import android.widget.*
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
-import com.example.myapplication.NetworkService
-import com.example.myapplication.ViewModel.ProductViewModel
+import androidx.navigation.Navigation
 import com.example.myapplication.databinding.FragmentProductBinding
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
+import com.example.myapplication.factory.ProdFragFactory
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 import java.lang.Exception
 import java.util.HashMap
 
@@ -35,13 +37,15 @@ class ProductFragment : Fragment() {
         root = binding!!.root
         inflat = inflater
         val id = arguments!!.getString("id")!!.toInt()
-        viewModel =
-            ViewModelProvider(this, ProductViewModel.MyViewModelFactory(id)).get(ProductViewModel::class.java)
-        viewModel!!.GetProduct().observe(this as LifecycleOwner, updateProduct)
+        viewModel = ViewModelProvider(this, ProdFragFactory(id)).get(
+            ProductViewModel::class.java
+        )
+        viewModel!!.GetProduct().observe((this as LifecycleOwner), updateProduct)
         return root
     }
 
-    var updateProduct = Observer<Product?> { product ->
+
+    var updateProduct = Observer<Product> { product ->
         val name = root!!.findViewById<TextView>(R.id.Product_name)
         val description = root!!.findViewById<TextView>(R.id.Product_description)
         val buy = root!!.findViewById<Button>(R.id.ProductBuy)
@@ -91,19 +95,20 @@ class ProductFragment : Fragment() {
     var BuyClick = View.OnClickListener { view ->
         val data = HashMap<String, Int>()
         data["id"] = Integer.valueOf(arguments!!.getString("id"))
-        GlobalScope.launch {
-            if (LoginData.getUsername() != null)
-            { val response = NetworkService.instance?.api?.PostSHoppingCart(data)
-            if (response!!.body() != "true") {
-                Toast.makeText(context, R.string.CartAddFailed, Toast.LENGTH_SHORT).show()
-            } else {
-                Toast.makeText(context, R.string.CartAddFailed, Toast.LENGTH_SHORT).show()
-                val bundle = Bundle()
-                bundle.putString("id", arguments!!.getString("id"))
-                findNavController(view).navigate(R.id.productFragment, bundle)
-            }
-        } else Toast.makeText(context, R.string.SignInRequired, Toast.LENGTH_SHORT).show()
-        }
+        if (LoginData.getUsername() != null) instance!!.api.PostSHoppingCart(data)!!.enqueue(object : Callback<String> {
+                override fun onResponse(call: Call<String>, response: Response<String>) {
+                    if (response.body() != "true") {
+                        Toast.makeText(context, R.string.CartAddFailed, Toast.LENGTH_SHORT).show()
+                    } else {
+                        Toast.makeText(context, R.string.CartAddFailed, Toast.LENGTH_SHORT).show()
+                        val bundle = Bundle()
+                        bundle.putString("id", arguments!!.getString("id"))
+                        Navigation.findNavController(view).navigate(R.id.productFragment, bundle)
+                    }
+                }
+
+                override fun onFailure(call: Call<String>, t: Throwable) {}
+            }) else Toast.makeText(context, R.string.SignInRequired, Toast.LENGTH_SHORT).show()
     }
 
     override fun onDestroyView() {

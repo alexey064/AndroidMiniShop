@@ -2,42 +2,32 @@ package com.example.myapplication.ViewModel
 
 import com.example.myapplication.NetworkService.Companion.instance
 import androidx.lifecycle.ViewModel
-import Models.linked.Product
-import com.example.myapplication.NetworkService
-import android.app.Application
 import androidx.lifecycle.MutableLiveData
+import Models.linked.Product
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.viewModelScope
-import com.example.myapplication.ViewModel.ProductViewModel
-import kotlinx.coroutines.launch
+import android.app.Application
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
 class ProductViewModel(id: Int) : ViewModel() {
-    var product: MutableLiveData<Product?>
-    fun GetProduct(): MutableLiveData<Product?> {
+    var product: MutableLiveData<Product>
+    fun GetProduct(): MutableLiveData<Product> {
         return product
-    }
-    init {
-        product = MutableLiveData()
-        init(id)
     }
 
     fun init(id: Int) {
-        viewModelScope.launch {
-            val response = NetworkService.instance?.api?.GetProduct(id)
-            if (response?.isSuccessful==true){
+        instance!!.api.GetProduct(id)!!.enqueue(object : Callback<Product?> {
+            override fun onResponse(call: Call<Product?>, response: Response<Product?>) {
                 product.value = response.body()
             }
-        }
+
+            override fun onFailure(call: Call<Product?>, t: Throwable) {}
+        })
     }
 
-
-    class MyViewModelFactory(private val mParam: Int) : ViewModelProvider.Factory {
-        private val mApplication: Application? = null
-        override fun <T : ViewModel> create(modelClass: Class<T>): T {
-            return ProductViewModel(mParam) as T
-        }
+    init {
+        product = MutableLiveData()
+        init(id)
     }
 }

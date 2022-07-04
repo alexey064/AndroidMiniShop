@@ -6,8 +6,7 @@ import okhttp3.Interceptor
 import retrofit2.converter.gson.GsonConverterFactory
 import com.google.gson.GsonBuilder
 import okhttp3.OkHttpClient
-import java.time.Duration
-import java.util.concurrent.TimeUnit
+import com.example.myapplication.Constants.BASE_URL
 
 class NetworkService private constructor() {
     private var mRetrofit: Retrofit
@@ -21,9 +20,8 @@ class NetworkService private constructor() {
             chain.proceed(request)
         })
         httpClient.addInterceptor(interceptor)
-        mRetrofit = Retrofit.Builder().addConverterFactory(buildGsonConverter()).baseUrl(BASE_URL)
+        mRetrofit = Retrofit.Builder().addConverterFactory(buildGsonConverter()).baseUrl(BASE)
             .client(httpClient.build()).build()
-        httpClient.connectTimeout(10.toLong(),TimeUnit.SECONDS)
     }
 
     val api: MySiteApi
@@ -31,7 +29,7 @@ class NetworkService private constructor() {
 
     companion object {
         private var mInstance: NetworkService? = null
-        private const val BASE_URL = "http://192.168.1.180:82/"
+        private val BASE = BASE_URL
         @JvmStatic
         val instance: NetworkService?
             get() {
@@ -48,13 +46,11 @@ class NetworkService private constructor() {
             return GsonConverterFactory.create(myGson)
         }
     }
-
     init {
         val interceptor = HttpLoggingInterceptor()
         interceptor.setLevel(HttpLoggingInterceptor.Level.BODY)
-        val client: OkHttpClient = OkHttpClient.Builder().addInterceptor(interceptor)
-            .connectTimeout(10.toLong(),TimeUnit.SECONDS).build()
-        mRetrofit = Retrofit.Builder().baseUrl(BASE_URL).client(client)
+        val client: OkHttpClient = OkHttpClient.Builder().addInterceptor(interceptor).build()
+        mRetrofit = Retrofit.Builder().baseUrl(BASE).client(client)
             .addConverterFactory(buildGsonConverter()).build()
     }
 }

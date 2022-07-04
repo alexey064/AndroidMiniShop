@@ -1,5 +1,6 @@
 package com.example.myapplication
 
+import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.ui.AppBarConfiguration
 import android.os.Bundle
 import androidx.navigation.ui.NavigationUI
@@ -7,7 +8,6 @@ import Models.LoginData
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.Navigation
 import com.example.myapplication.databinding.ActivityMainBinding
 

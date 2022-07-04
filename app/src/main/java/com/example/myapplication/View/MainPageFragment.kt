@@ -1,61 +1,77 @@
 package com.example.myapplication.View
 
 import androidx.recyclerview.widget.RecyclerView
-import com.example.myapplication.ViewModel.MainPageViewModel
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.os.Bundle
-import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.myapplication.Other.LeftRightSpacesItemDecoration
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.LifecycleOwner
-import Models.ViewModel.MainPageData
+import com.example.myapplication.ViewModel.MainPageViewModel
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.myapplication.Other.LeftRightSpacesItemDecoration
+import Models.linked.Product
 import android.view.View
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import com.example.myapplication.Adapter.Adapter
 import com.example.myapplication.databinding.FragmentMainPageBinding
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class MainPageFragment : Fragment() {
     private var binding: FragmentMainPageBinding? = null
-    lateinit var _NewlyAdded: RecyclerView
-    lateinit var _MostBuyed: RecyclerView
-    lateinit var _MostDiscounted: RecyclerView
-    lateinit var viewModel: MainPageViewModel
+    var RecNewlyAdded: RecyclerView? = null
+    var RecMostBuyed: RecyclerView? = null
+    var RecMostDiscounted: RecyclerView? = null
+    val viewModel: MainPageViewModel by viewModel()
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?, savedInstanceState: Bundle?
     ): View? {
         binding = FragmentMainPageBinding.inflate(inflater, container, false)
         val root: View = binding!!.root
-        _NewlyAdded = binding!!.NewlyAdded
-        _MostBuyed = binding!!.MostBuyed
-        _MostDiscounted = binding!!.MostDiscounted
+        RecNewlyAdded = binding!!.NewlyAdded
+        RecMostBuyed = binding!!.MostBuyed
+        RecMostDiscounted = binding!!.MostDiscounted
         val HorizontalLayout1 =
             LinearLayoutManager(binding!!.root.context, LinearLayoutManager.HORIZONTAL, false)
-        _NewlyAdded.layoutManager = HorizontalLayout1
+        RecNewlyAdded!!.layoutManager = HorizontalLayout1
         val SpacesItemDecoration = LeftRightSpacesItemDecoration(15)
-        _NewlyAdded.addItemDecoration(SpacesItemDecoration)
+        RecNewlyAdded!!.addItemDecoration(SpacesItemDecoration)
         val HorizontalLayout2 =
             LinearLayoutManager(binding!!.root.context, LinearLayoutManager.HORIZONTAL, false)
-        _MostBuyed.layoutManager = HorizontalLayout2
-        _MostBuyed.addItemDecoration(SpacesItemDecoration)
+        RecMostBuyed!!.layoutManager = HorizontalLayout2
+        RecMostBuyed!!.addItemDecoration(SpacesItemDecoration)
         val HorizontalLayout3 =
             LinearLayoutManager(binding!!.root.context, LinearLayoutManager.HORIZONTAL, false)
-        _MostDiscounted.layoutManager = HorizontalLayout3
-        _MostDiscounted.addItemDecoration(SpacesItemDecoration)
-        viewModel = ViewModelProvider(this).get(MainPageViewModel::class.java)
-        viewModel.mainPageData.observe(this as LifecycleOwner, updateMainPageData)
+        RecMostDiscounted!!.layoutManager = HorizontalLayout3
+        RecMostDiscounted!!.addItemDecoration(SpacesItemDecoration)
+
+        //viewModel = ViewModelProvider(this).get(MainPageViewModel::class.java)
+        viewModel.NewlyAdded.observe((this as LifecycleOwner), updateNewlyAdded)
+        //viewModel.MaxDiscounted.observe((this as LifecycleOwner), updateMostBuyed)
+        //viewModel.MostBuyed.observe((this as LifecycleOwner), updateMaxDiscounted)
+
+        viewModel.getNewlyAdded(0,5)
+        //viewModel.getMaxDiscounted()
+        //viewModel.getMostBuyed()
         return root
     }
 
-    var updateMainPageData = Observer<MainPageData> { mainPageData ->
-        val NewlyAddedAdapter = Adapter(mainPageData.newlyAdded)
-        _NewlyAdded.adapter = NewlyAddedAdapter
-        val MostBuyedAdapter = Adapter(mainPageData.mostBuyed)
-        _MostBuyed.adapter = MostBuyedAdapter
-        val MostDiscountedAdapter = Adapter(mainPageData.maxDiscounted)
-        _MostDiscounted.adapter = MostDiscountedAdapter
+    var updateNewlyAdded = Observer<ArrayList<Product>> { NewlyAdded ->
+        val NewlyAddedAdapter = Adapter(NewlyAdded)
+        RecNewlyAdded!!.adapter = NewlyAddedAdapter
+    }
+    var updateMostBuyed = Observer<ArrayList<Product>>
+    { MostBuyed->
+        val MostBuyedAdapter = Adapter(MostBuyed)
+        RecMostBuyed!!.adapter = MostBuyedAdapter
+    }
+    var updateMaxDiscounted = Observer<ArrayList<Product>>
+    { MaxDiscounted->
+        val MostDiscountedAdapter = Adapter(MaxDiscounted)
+        RecMostDiscounted!!.adapter = MostDiscountedAdapter
     }
 
     override fun onDestroyView() {

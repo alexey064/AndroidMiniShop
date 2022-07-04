@@ -7,11 +7,11 @@
     android:layout_height="match_parent"
     tools:openDrawer="start"
     android:id="@+id/drawer"
-    tools:context=".MainActivity">
+    tools:context=".View.MainActivity">
     <androidx.appcompat.widget.LinearLayoutCompat
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".MainActivity"
+        tools:context=".View.MainActivity"
         android:orientation="vertical">
         <TextView
             android:layout_width="match_parent"

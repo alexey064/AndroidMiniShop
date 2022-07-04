@@ -1,30 +1,25 @@
 package com.example.myapplication.View
 
 import com.example.myapplication.NetworkService.Companion.instance
-import androidx.navigation.Navigation.findNavController
-import android.widget.EditText
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.os.Bundle
 import com.example.myapplication.R
 import Models.LoginData
 import android.view.View
-import android.widget.Button
-import android.widget.Toast
+import android.widget.*
 import androidx.fragment.app.Fragment
 import androidx.navigation.Navigation
-import com.example.myapplication.ViewModel.LoginViewModel
 import com.example.myapplication.databinding.FragmentLoginBinding
-import kotlinx.coroutines.GlobalScope
-import org.koin.androidx.viewmodel.ext.android.viewModel
-import kotlinx.coroutines.launch
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 import java.util.HashMap
 
 class LogInFragment : Fragment() {
-    var binding: FragmentLoginBinding?=null
-    lateinit var LoginEdit: EditText
-    lateinit var PasswordEdit: EditText
-    val viewmodel by viewModel<LoginViewModel>()
+    private var binding: FragmentLoginBinding? = null
+    private var LoginEdit: EditText? = null
+    private var PasswordEdit: EditText? = null
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?, savedInstanceState: Bundle?
@@ -49,16 +44,18 @@ class LogInFragment : Fragment() {
         val SignData = HashMap<String, String>()
         SignData["Username"] = login
         SignData["Password"] = password
-        GlobalScope.launch {
-            if (viewmodel.LoginButtonClick(SignData))
-            {
+        instance!!.api.SignIn(SignData)!!.enqueue(object : Callback<String?> {
+            override fun onResponse(call: Call<String?>, response: Response<String?>) {
+                LoginData.setUsername(LoginEdit!!.text.toString())
+                LoginData.setPassword(PasswordEdit!!.text.toString())
+                instance!!.getAuthorizeInstance(response.body()!!)
+                LoginData.setToken(response.body())
                 Navigation.findNavController(view).navigate(R.id.mainPageFragment)
             }
-            else
-            {
+
+            override fun onFailure(call: Call<String?>, t: Throwable) {
                 Toast.makeText(context, R.string.WrongLoginPassword, Toast.LENGTH_SHORT).show()
             }
-        }
-
+        })
     }
 }

@@ -1,7 +1,6 @@
 package com.example.myapplication.View
 
 import com.example.myapplication.NetworkService.Companion.instance
-import androidx.navigation.Navigation.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.example.myapplication.ViewModel.CartViewModel
 import android.view.LayoutInflater
@@ -11,14 +10,13 @@ import com.example.myapplication.R
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.LifecycleOwner
 import Models.linked.Product
+import com.example.myapplication.Adapter.CartAdapter
 import android.view.View
-import android.widget.Button
+import android.widget.*
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
-import com.example.myapplication.Adapter.CartAdapter
+import androidx.navigation.Navigation
 import com.example.myapplication.databinding.FragmentCartBinding
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.async
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -28,7 +26,7 @@ class CartFragment : Fragment(), View.OnClickListener {
     private var binding: FragmentCartBinding? = null
     var CartRecView: RecyclerView? = null
     var viewModel: CartViewModel? = null
-    lateinit var makeOrder: Button
+    lateinit var makeOrder: Button;
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?, savedInstanceState: Bundle?
@@ -54,12 +52,11 @@ class CartFragment : Fragment(), View.OnClickListener {
     }
 
     override fun onClick(view: View) {
-        GlobalScope.async {
-            val response = instance?.api?.CompleteOrder()
-            if (response?.isSuccessful==true)
-            {
-                findNavController(view).navigate(R.id.CartFragment)
+        instance!!.api.CompleteOrder()!!.enqueue(object : Callback<String> {
+            override fun onResponse(call: Call<String?>, response: Response<String>) {
+                Navigation.findNavController(view).navigate(R.id.CartFragment)
             }
-        }
+            override fun onFailure(call: Call<String?>, t: Throwable) {}
+        })
     }
 }
