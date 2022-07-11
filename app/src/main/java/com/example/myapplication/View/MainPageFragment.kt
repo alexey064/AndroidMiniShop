@@ -50,12 +50,12 @@ class MainPageFragment : Fragment() {
 
         //viewModel = ViewModelProvider(this).get(MainPageViewModel::class.java)
         viewModel.NewlyAdded.observe((this as LifecycleOwner), updateNewlyAdded)
-        //viewModel.MaxDiscounted.observe((this as LifecycleOwner), updateMostBuyed)
-        //viewModel.MostBuyed.observe((this as LifecycleOwner), updateMaxDiscounted)
+        viewModel.MaxDiscounted.observe((this as LifecycleOwner), updateMostBuyed)
+        viewModel.MostBuyed.observe((this as LifecycleOwner), updateMaxDiscounted)
 
         viewModel.getNewlyAdded(0,5)
-        //viewModel.getMaxDiscounted()
-        //viewModel.getMostBuyed()
+        viewModel.getMaxDiscounted(0, 5)
+        viewModel.getMostBuyed(0, 5)
         return root
     }
 

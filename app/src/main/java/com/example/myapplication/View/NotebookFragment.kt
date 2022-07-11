@@ -4,10 +4,8 @@ import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.os.Bundle
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.LifecycleOwner
 import Models.linked.Product
-import android.util.Log
 import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
@@ -15,13 +13,13 @@ import com.example.myapplication.ViewModel.NotebookViewModel
 import com.example.myapplication.Adapter.CatalogAdapter
 import com.example.myapplication.Other.VerticalSpacesItemDecoration
 import com.example.myapplication.databinding.FragmentNotebookBinding
+import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.util.*
 
 class NotebookFragment : Fragment(), LifecycleOwner {
     private var binding: FragmentNotebookBinding? = null
-    private var viewModel: NotebookViewModel? = null
+    private val viewModel: NotebookViewModel by viewModel()
     var NotebookRecView: RecyclerView? = null
-    var adapter: CatalogAdapter? = null
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?, savedInstanceState: Bundle?
@@ -29,22 +27,17 @@ class NotebookFragment : Fragment(), LifecycleOwner {
         binding = FragmentNotebookBinding.inflate(inflater, container, false)
         val root: View = binding!!.root
         NotebookRecView = binding!!.NotebookRecView
+
         val SpacesItemDecoration = VerticalSpacesItemDecoration(15)
         NotebookRecView!!.addItemDecoration(SpacesItemDecoration)
-        viewModel = ViewModelProvider(this).get(NotebookViewModel::class.java)
-        viewModel!!.userMutableLiveData.observe(
-            (context as LifecycleOwner?)!!,
-            userListUpdateObserver
-        )
+        viewModel.NotebookListLiveData.observe((context as LifecycleOwner?)!!, userListUpdateObserver)
+        viewModel.GetNotebook(0, 5)
         return root
     }
 
     var userListUpdateObserver: Observer<ArrayList<Product>?> =
         Observer<ArrayList<Product>?> { userArrayList ->
-            adapter = CatalogAdapter(userArrayList)
-            NotebookRecView!!.adapter = adapter
-            val EndDate = Date()
-            Log.d("TIMER", EndDate.time.toString())
+            NotebookRecView!!.adapter = CatalogAdapter(userArrayList)
         }
 
     override fun onDestroyView() {

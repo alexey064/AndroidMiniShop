@@ -14,12 +14,13 @@ import com.example.myapplication.Adapter.CatalogAdapter
 import com.example.myapplication.Other.VerticalSpacesItemDecoration
 import com.example.myapplication.ViewModel.AccessoryViewModel
 import com.example.myapplication.databinding.FragmentAccessoryBinding
+import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.util.ArrayList
 
 class AccessoryFragment : Fragment() {
     private var binding: FragmentAccessoryBinding? = null
     var AccessoryRecView: RecyclerView? = null
-    var viewModel: AccessoryViewModel? = null
+    val viewModel: AccessoryViewModel by viewModel()
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?, savedInstanceState: Bundle?
@@ -29,8 +30,8 @@ class AccessoryFragment : Fragment() {
         AccessoryRecView = binding!!.AccessoryRecView
         val SpacesItemDecoration = VerticalSpacesItemDecoration(15)
         AccessoryRecView!!.addItemDecoration(SpacesItemDecoration)
-        viewModel = ViewModelProvider(this).get(AccessoryViewModel::class.java)
-        viewModel!!.accessoryLiveData.observe((this as LifecycleOwner), updateAccessoryList)
+        viewModel.accessoryLiveData.observe((this as LifecycleOwner), updateAccessoryList)
+        viewModel.getAccessories(0, 5)
         return root
     }
 

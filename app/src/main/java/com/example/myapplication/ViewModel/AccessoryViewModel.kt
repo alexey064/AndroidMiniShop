@@ -4,29 +4,29 @@ import com.example.myapplication.NetworkService.Companion.instance
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.MutableLiveData
 import Models.linked.Product
+import com.example.myapplication.domain.repositories.AccessoriesRepository
+import com.example.myapplication.domain.usecases.GetAccessoryUseCase
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import java.util.ArrayList
 
-class AccessoryViewModel : ViewModel() {
-    var accessoryLiveData: MutableLiveData<ArrayList<Product>>
-    private val TYPE = "Accessory"
-    fun init() {
-        instance!!.api.GetCatalog(TYPE)!!.enqueue(object : Callback<ArrayList<Product>?> {
-            override fun onResponse(
-                call: Call<ArrayList<Product>?>,
-                response: Response<ArrayList<Product>?>
-            ) {
-                accessoryLiveData.postValue(response.body())
-            }
-
-            override fun onFailure(call: Call<ArrayList<Product>?>, t: Throwable) {}
-        })
+class AccessoryViewModel(accessoryUseCase: GetAccessoryUseCase) : ViewModel() {
+    var AccessoryUseCase : GetAccessoryUseCase
+    init{
+        AccessoryUseCase=accessoryUseCase
     }
-
+    var accessoryLiveData: MutableLiveData<ArrayList<Product>>
+    fun getAccessories(skip : Int, count : Int)
+    {
+        CoroutineScope(Dispatchers.IO).launch {
+            accessoryLiveData.postValue(AccessoryUseCase.Execute(skip, count))
+        }
+    }
     init {
         accessoryLiveData = MutableLiveData()
-        init()
     }
 }

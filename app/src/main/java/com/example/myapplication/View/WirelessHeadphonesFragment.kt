@@ -15,11 +15,12 @@ import com.example.myapplication.Other.VerticalSpacesItemDecoration
 import com.example.myapplication.ViewModel.WirelessHeadphonesViewModel
 import com.example.myapplication.databinding.FragmentWirelessheadphonesBinding
 import java.util.ArrayList
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class WirelessHeadphonesFragment : Fragment() {
     private var binding: FragmentWirelessheadphonesBinding? = null
-    var WirelessHeadphonesRecView: RecyclerView? = null
-    var viewModel: WirelessHeadphonesViewModel? = null
+    lateinit var WirelessHeadphonesRecView: RecyclerView
+    val viewModel: WirelessHeadphonesViewModel by viewModel()
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?, savedInstanceState: Bundle?
@@ -27,15 +28,12 @@ class WirelessHeadphonesFragment : Fragment() {
         binding = FragmentWirelessheadphonesBinding.inflate(inflater, container, false)
         val root: View = binding!!.root
         WirelessHeadphonesRecView = binding!!.WirelessRecView
+
         val SpacesItemDecoration = VerticalSpacesItemDecoration(15)
         WirelessHeadphonesRecView!!.addItemDecoration(SpacesItemDecoration)
-        viewModel = ViewModelProvider(this).get(
-            WirelessHeadphonesViewModel::class.java
-        )
-        viewModel!!.wirelessHeadphonesLiveData.observe(
-            (context as LifecycleOwner?)!!,
-            updateWirelessHeadphones
-        )
+
+        viewModel.wirelessHeadphonesLiveData.observe((context as LifecycleOwner?)!!, updateWirelessHeadphones)
+        viewModel.getWireless(0, 5)
         return root
     }
 

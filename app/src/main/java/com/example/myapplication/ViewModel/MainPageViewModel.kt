@@ -30,14 +30,16 @@ class MainPageViewModel(newlyAddedUseCase : GetNewlyAddedUseCase, maxDiscountedU
             NewlyAdded.postValue(NewlyAddedUseCase.Execute(skip, count))
         }
     }
-    fun getMostBuyed()
+    fun getMostBuyed(skip: Int, count: Int)
     {
         CoroutineScope(Dispatchers.IO).launch {
-
+            MostBuyed.postValue(MostBuyedUseCase.Execute(skip, count))
         }
     }
-    fun getMaxDiscounted()
+    fun getMaxDiscounted(skip: Int, count: Int)
     {
-
+        CoroutineScope(Dispatchers.IO).launch {
+            MaxDiscounted.postValue(MaxDiscountedUseCase.Execute(skip, count))
+        }
     }
 }

@@ -1,38 +1,25 @@
 package com.example.myapplication.ViewModel
 
-import com.example.myapplication.NetworkService.Companion.instance
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.MutableLiveData
 import Models.linked.Product
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
+import com.example.myapplication.domain.usecases.GetSmartphoneUseCase
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import java.util.ArrayList
 
-class SmartphoneViewModel : ViewModel() {
-    var userMutableLiveData: MutableLiveData<ArrayList<Product>>
-    var products = ArrayList<Product>()
-    var TYPE = "Smartphone"
-    fun init() {
-        populateList()
-        userMutableLiveData.value = products
-    }
-
-    fun populateList() {
-        instance!!.api.GetCatalog(TYPE)!!.enqueue(object : Callback<ArrayList<Product>?> {
-            override fun onResponse(
-                call: Call<ArrayList<Product>?>,
-                response: Response<ArrayList<Product>?>
-            ) {
-                userMutableLiveData.postValue(response.body())
-            }
-
-            override fun onFailure(call: Call<ArrayList<Product>?>, t: Throwable) {}
-        })
-    }
-
+class SmartphoneViewModel(getSmartphone : GetSmartphoneUseCase) : ViewModel() {
+    var SmartphoneListLiveData: MutableLiveData<ArrayList<Product>>
+    var getSmartphoneUseCase : GetSmartphoneUseCase
     init {
-        userMutableLiveData = MutableLiveData()
-        init()
+        SmartphoneListLiveData = MutableLiveData()
+        getSmartphoneUseCase=getSmartphone
+    }
+    fun getSmartphones(skip : Int, count : Int)
+    {
+        CoroutineScope(Dispatchers.IO).launch {
+            SmartphoneListLiveData.postValue(getSmartphoneUseCase.Execute(skip, count))
+        }
     }
 }

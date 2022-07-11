@@ -1,32 +1,25 @@
 package com.example.myapplication.ViewModel
 
-import com.example.myapplication.NetworkService.Companion.instance
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.MutableLiveData
 import Models.linked.Product
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
+import com.example.myapplication.domain.usecases.GetWireHeadUseCase
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import java.util.ArrayList
 
-class WireHeadphonesViewModel : ViewModel() {
-    var userMutableLiveData: MutableLiveData<ArrayList<Product>>
-    private val TYPE = "WireHeadphone"
-    fun init() {
-        instance!!.api.GetCatalog(TYPE)!!.enqueue(object : Callback<ArrayList<Product>?> {
-            override fun onResponse(
-                call: Call<ArrayList<Product>?>,
-                response: Response<ArrayList<Product>?>
-            ) {
-                userMutableLiveData.postValue(response.body())
-            }
-
-            override fun onFailure(call: Call<ArrayList<Product>?>, t: Throwable) {}
-        })
-    }
-
+class WireHeadphonesViewModel(getWireHead: GetWireHeadUseCase) : ViewModel() {
+    var WireHeadListLiveData: MutableLiveData<ArrayList<Product>>
+    var getWireHeadUseCase : GetWireHeadUseCase
     init {
-        userMutableLiveData = MutableLiveData()
-        init()
+        WireHeadListLiveData = MutableLiveData()
+        getWireHeadUseCase=getWireHead
+    }
+    fun getWireHead(skip : Int, count : Int)
+    {
+        CoroutineScope(Dispatchers.IO).launch {
+            WireHeadListLiveData.postValue(getWireHeadUseCase.Execute(skip, count))
+        }
     }
 }

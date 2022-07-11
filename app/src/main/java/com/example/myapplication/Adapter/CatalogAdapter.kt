@@ -10,6 +10,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.widget.ImageView
 import androidx.navigation.Navigation
+import com.example.myapplication.Constants.BASE_URL
 import com.squareup.picasso.Picasso
 import java.lang.Exception
 import java.util.ArrayList
@@ -90,7 +91,8 @@ class CatalogAdapter : RecyclerView.Adapter<CatalogAdapter.MyView> {
         val url = Products!![position].photo
         try {
             Picasso.get() // Context
-                .load("http://192.168.1.180:82$url") // URL or file
+                .load(
+                    BASE_URL+url) // URL or file
                 .into(holder.CatalogPicture)
         } catch (e: Exception) {
             e.printStackTrace()

@@ -12,13 +12,13 @@ interface MySiteApi {
     suspend fun newlyAdded(@Query("skip") skip: Int, @Query("Count") count: Int): Response<ArrayList<Product>?>?
 
     @GET("api/MostBuyed")
-    fun MostBuyed(@Query("skip") skip: Int, @Query("Count") count: Int): Response<ArrayList<Product>?>?
+    suspend fun MostBuyed(@Query("skip") skip: Int, @Query("Count") count: Int): Response<ArrayList<Product>?>?
 
-    @GET("api/MaxDiscounted")
-    fun MaxDiscounted(@Query("skip") skip: Int, @Query("Count") count: Int): Response<ArrayList<Product>?>?
+    @GET("api/MostDiscounted")
+    suspend fun MaxDiscounted(@Query("skip") skip: Int, @Query("Count") count: Int): Response<ArrayList<Product>?>?
 
     @GET("api/catalog")
-    fun GetCatalog(@Query("type") type: String?): Call<ArrayList<Product>?>?
+    suspend fun GetCatalog(@Query("type") type: String?, @Query("skip") skip: Int, @Query("Count")count: Int): Response<ArrayList<Product>?>?
 
     @GET("api/GetProduct")
     fun GetProduct(@Query("id") id: Int): Call<Product>?
