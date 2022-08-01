@@ -21,10 +21,13 @@ interface MySiteApi {
     suspend fun GetCatalog(@Query("type") type: String?, @Query("skip") skip: Int, @Query("Count")count: Int): Response<ArrayList<Product>?>?
 
     @GET("api/GetProduct")
-    fun GetProduct(@Query("id") id: Int): Call<Product>?
+    suspend fun GetProduct(@Query("id") id: Int): Response<Product>?
 
-    @POST("api/Login")
-    fun SignIn(@Body SignData: HashMap<String, String>?): Call<String>?
+    @POST("api/accountApi/Login")
+    suspend fun SignIn(@Body SignData: HashMap<String, String>?): Response<String>?
+
+    @POST("api/accountApi/Register")
+    suspend fun Register(@Body RegData : HashMap<String, String>?): Response<String>?
 
     @GET("api/ShoppingCart")
     fun GetShoppingCart(): Call<ArrayList<Product>?>?

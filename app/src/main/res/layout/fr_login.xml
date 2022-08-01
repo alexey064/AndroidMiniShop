@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -9,19 +10,18 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal">
         <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="140dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:layout_gravity="center"
+            android:layout_weight="1"
             android:layout_marginStart="20dp"
             android:orientation="vertical">
             <TextView
-                android:id="@+id/textView2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
                 android:text="@string/Login" />
             <TextView
-                android:id="@+id/textView3"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="60dp"
@@ -29,30 +29,29 @@
         </LinearLayout>
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="140dp"
+            android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_marginEnd="20dp"
+            android:layout_weight="1"
             android:orientation="vertical">
             <EditText
-                android:id="@+id/Login"
+                android:id="@+id/LogInEdit"
                 android:layout_width="match_parent"
                 android:layout_height="60dp"
                 android:ems="10"
                 android:inputType="textPersonName"
-                tools:ignore="SpeakableTextPresentCheck" />
+                tools:ignore="SpeakableTextPresentCheck"/>
             <EditText
-                android:id="@+id/Password"
+                android:id="@+id/PasswordEdit"
                 android:layout_width="match_parent"
                 android:layout_height="60dp"
                 android:layout_marginTop="20dp"
-                android:ems="10"
-                android:inputType="textPassword"
                 tools:ignore="SpeakableTextPresentCheck" />
         </LinearLayout>
     </LinearLayout>
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/SignInTo"
-        android:text="@string/SignIn"/>
+        android:id="@+id/LogInButton"
+        android:text="@string/Login"/>
 </LinearLayout>

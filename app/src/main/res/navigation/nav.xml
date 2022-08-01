@@ -35,7 +35,7 @@
         android:label="ProductFragment" />
     <fragment
         android:id="@+id/LoginFragment"
-        android:name="com.example.myapplication.View.LogInFragment"
+        android:name="com.example.myapplication.View.AccountFragment"
         android:label="LoginFragment"/>
     <fragment
         android:id="@+id/CartFragment"

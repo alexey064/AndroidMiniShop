@@ -5,7 +5,6 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.os.Bundle
 import com.example.myapplication.R
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.LifecycleOwner
 import Models.linked.Product
 import Models.LoginData
@@ -17,33 +16,32 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.navigation.Navigation
 import com.example.myapplication.databinding.FragmentProductBinding
-import com.example.myapplication.factory.ProdFragFactory
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import java.lang.Exception
 import java.util.HashMap
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class ProductFragment : Fragment() {
-    private var binding: FragmentProductBinding? = null
-    var viewModel: ProductViewModel? = null
-    var root: View? = null
-    var inflat: LayoutInflater? = null
+    lateinit var binding: FragmentProductBinding
+    val viewModel: ProductViewModel by viewModel()
+    lateinit var root: View
+    lateinit var inflat: LayoutInflater
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?, savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         binding = FragmentProductBinding.inflate(inflater, container, false)
-        root = binding!!.root
+        root = binding.root
         inflat = inflater
-        val id = arguments!!.getString("id")!!.toInt()
-        viewModel = ViewModelProvider(this, ProdFragFactory(id)).get(
-            ProductViewModel::class.java
-        )
-        viewModel!!.GetProduct().observe((this as LifecycleOwner), updateProduct)
+
+        viewModel.product.observe((this as LifecycleOwner), updateProduct)
+
+        val id = requireArguments().getString("id")!!.toInt()
+        viewModel.getProduct(id)
         return root
     }
-
 
     var updateProduct = Observer<Product> { product ->
         val name = root!!.findViewById<TextView>(R.id.Product_name)
@@ -94,29 +92,28 @@ class ProductFragment : Fragment() {
     }
     var BuyClick = View.OnClickListener { view ->
         val data = HashMap<String, Int>()
-        data["id"] = Integer.valueOf(arguments!!.getString("id"))
+        data["id"] = Integer.valueOf(requireArguments().getString("id"))
         if (LoginData.getUsername() != null) instance!!.api.PostSHoppingCart(data)!!.enqueue(object : Callback<String> {
-                override fun onResponse(call: Call<String>, response: Response<String>) {
-                    if (response.body() != "true") {
-                        Toast.makeText(context, R.string.CartAddFailed, Toast.LENGTH_SHORT).show()
-                    } else {
-                        Toast.makeText(context, R.string.CartAddFailed, Toast.LENGTH_SHORT).show()
-                        val bundle = Bundle()
-                        bundle.putString("id", arguments!!.getString("id"))
-                        Navigation.findNavController(view).navigate(R.id.productFragment, bundle)
-                    }
+            override fun onResponse(call: Call<String>, response: Response<String>) {
+                if (response.body() != "true") {
+                    Toast.makeText(context, R.string.CartAddFailed, Toast.LENGTH_SHORT).show()
+                } else {
+                    Toast.makeText(context, R.string.CartAddFailed, Toast.LENGTH_SHORT).show()
+                    val bundle = Bundle()
+                    bundle.putString("id", arguments!!.getString("id"))
+                    Navigation.findNavController(view).navigate(R.id.productFragment, bundle)
                 }
+            }
 
-                override fun onFailure(call: Call<String>, t: Throwable) {}
-            }) else Toast.makeText(context, R.string.SignInRequired, Toast.LENGTH_SHORT).show()
+            override fun onFailure(call: Call<String>, t: Throwable) {}
+        }) else Toast.makeText(context, R.string.SignInRequired, Toast.LENGTH_SHORT).show()
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
-        binding = null
     }
 
-    fun getNotebookDetail(AddInfo: View?, product: Product): View? {
+    fun getNotebookDetail(AddInfo: View?, product: Product): View {
         val RamCountValue = AddInfo!!.findViewById<TextView>(R.id.RamCountValue)
         RamCountValue.text = product.notebook.ramCount.toString()
         val WeightValue = AddInfo.findViewById<TextView>(R.id.WeightValue)
@@ -151,8 +148,8 @@ class ProductFragment : Fragment() {
         return AddInfo
     }
 
-    fun getSmartphoneDetail(view: View?, product: Product): View? {
-        val MemoryCountValue = view!!.findViewById<TextView>(R.id.MemoryCountValue)
+    fun getSmartphoneDetail(view: View, product: Product): View {
+        val MemoryCountValue = view.findViewById<TextView>(R.id.MemoryCountValue)
         MemoryCountValue.text = product.smartphone.memoryCount.toString()
         val RamCountValue = view.findViewById<TextView>(R.id.RamCountValue)
         RamCountValue.text = product.smartphone.ramCount.toString()
@@ -170,8 +167,11 @@ class ProductFragment : Fragment() {
         CommunicationValue.text = product.smartphone.communication.toString()
         val ScreenSizeValue = view.findViewById<TextView>(R.id.ScreenSizeValue)
         ScreenSizeValue.text = product.smartphone.screenSize.toString()
+
         val OptionalValue = view.findViewById<TextView>(R.id.OptionalValue)
-        OptionalValue.text = product.smartphone.optional.toString()
+        if (!product.smartphone.optional.isNullOrEmpty()) {
+            OptionalValue.text = product.smartphone.optional.toString()
+        }
         val ScreenResolutionValue = view.findViewById<TextView>(R.id.ScreenResolutionValue)
         ScreenResolutionValue.text = product.smartphone.screenResolution.toString()
         val OSValue = view.findViewById<TextView>(R.id.OSValue)
@@ -185,8 +185,8 @@ class ProductFragment : Fragment() {
         return view
     }
 
-    fun getWirelessHeadphonesDetail(view: View?, product: Product): View? {
-        val RadiusValue = view!!.findViewById<TextView>(R.id.RadiusValue)
+    fun getWirelessHeadphonesDetail(view: View, product: Product): View {
+        val RadiusValue = view.findViewById<TextView>(R.id.RadiusValue)
         RadiusValue.text = product.wirelessHeadphones.radius.toString()
         val BatteryValue = view.findViewById<TextView>(R.id.BatteryValue)
         BatteryValue.text = product.wirelessHeadphones.battery.toString()
@@ -197,8 +197,8 @@ class ProductFragment : Fragment() {
         return view
     }
 
-    fun getWireHeadphones(view: View?, product: Product): View? {
-        val WireLength = view!!.findViewById<TextView>(R.id.WireLengthValue)
+    fun getWireHeadphones(view: View, product: Product): View {
+        val WireLength = view.findViewById<TextView>(R.id.WireLengthValue)
         WireLength.text = product.wireHeadphones.wireLenght.toString()
         val ConnectionType = view.findViewById<TextView>(R.id.ConnectionTypeValue)
         ConnectionType.text = product.wireHeadphones.connectionType.name

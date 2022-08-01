@@ -7,11 +7,12 @@ import retrofit2.converter.gson.GsonConverterFactory
 import com.google.gson.GsonBuilder
 import okhttp3.OkHttpClient
 import com.example.myapplication.Constants.BASE_URL
+import java.util.concurrent.TimeUnit
 
 class NetworkService private constructor() {
     private var mRetrofit: Retrofit
     fun getAuthorizeInstance(Token: String) {
-        val httpClient = OkHttpClient.Builder()
+        val httpClient = OkHttpClient.Builder().connectTimeout(5L,TimeUnit.SECONDS )
         val interceptor = HttpLoggingInterceptor()
         interceptor.setLevel(HttpLoggingInterceptor.Level.BODY)
         httpClient.addInterceptor(Interceptor { chain ->
@@ -49,7 +50,7 @@ class NetworkService private constructor() {
     init {
         val interceptor = HttpLoggingInterceptor()
         interceptor.setLevel(HttpLoggingInterceptor.Level.BODY)
-        val client: OkHttpClient = OkHttpClient.Builder().addInterceptor(interceptor).build()
+        val client: OkHttpClient = OkHttpClient.Builder().connectTimeout(5L,TimeUnit.SECONDS ).addInterceptor(interceptor).build()
         mRetrofit = Retrofit.Builder().baseUrl(BASE).client(client)
             .addConverterFactory(buildGsonConverter()).build()
     }

@@ -4,6 +4,15 @@
     <option name="filePathToZoomLevelMap">
       <map>
         <entry key="..\:/DiplomAndroid2/app/src/main/res/layout/activity_main.xml" value="0.12552083333333333" />
+        <entry key="..\:/DiplomAndroid2/app/src/main/res/layout/app_bar_main.xml" value="0.12552083333333333" />
+        <entry key="..\:/DiplomAndroid2/app/src/main/res/layout/catalogitem.xml" value="0.12552083333333333" />
+        <entry key="..\:/DiplomAndroid2/app/src/main/res/layout/fr_login.xml" value="0.25" />
+        <entry key="..\:/DiplomAndroid2/app/src/main/res/layout/fr_reg.xml" value="0.24909420289855072" />
+        <entry key="..\:/DiplomAndroid2/app/src/main/res/layout/fragment_accessory.xml" value="0.24909420289855072" />
+        <entry key="..\:/DiplomAndroid2/app/src/main/res/layout/fragment_account.xml" value="0.12552083333333333" />
+        <entry key="..\:/DiplomAndroid2/app/src/main/res/layout/fragment_accountBACKUP.xml" value="0.24909420289855072" />
+        <entry key="..\:/DiplomAndroid2/app/src/main/res/layout/fragment_account_backup.xml" value="0.12552083333333333" />
+        <entry key="..\:/DiplomAndroid2/app/src/main/res/layout/test.xml" value="0.2504528985507246" />
       </map>
     </option>
   </component>

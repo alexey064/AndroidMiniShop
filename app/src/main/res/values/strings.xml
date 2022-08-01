@@ -40,13 +40,23 @@
     <string name="CaseBatteryTitle">Case Battery</string>
     <string name="WireLengthTitle">wire length</string>
     <string name="ConnectionTypeTitle">ConnectionType</string>
-    <string name="Login">Login</string>
-    <string name="Password">Password</string>
-    <string name="SignIn">SignIn</string>
-    <string name="WrongLoginPassword">Wrong login or password.</string>
-    <string name="AlreadySignIn">You are already signIn</string>
-    <string name="SignInRequired">This option accessible only for signIn user</string>
+
     <string name="CartAddFailed">Cannot add product to Cart</string>
     <string name="CartAddSuccess">Product added to Cart</string>
     <string name="NotInStock">Not in stock</string>
+
+    <string name="WrongLoginPassword">Wrong login or password.</string>
+    <string name="AlreadySignIn">You are already signIn</string>
+    <string name="SignInRequired">This option accessible only for signIn user</string>
+    <string name="UserExists">User with current name is already exists</string>
+
+    <string name="Login">Login</string>
+    <string name="Password">Password</string>
+    <string name="SignIn">SignIn</string>
+
+    <string name="RegName">Nickname</string>
+    <string name="regEmail">Email</string>
+    <string name="regPassword">password</string>
+    <string name="regConfPassword">Confirm password</string>
+    <string name="regButton">Registration</string>
 </resources>

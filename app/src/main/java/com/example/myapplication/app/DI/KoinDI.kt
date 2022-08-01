@@ -42,4 +42,5 @@ val DImodule = module {
     viewModel{SmartphoneViewModel(get())}
     viewModel{WireHeadphonesViewModel(get())}
     viewModel{WirelessHeadphonesViewModel(get())}
+    viewModel{ProductViewModel()}
 }
